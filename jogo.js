@@ -102,20 +102,51 @@ const mensagemGetReady = {
 
 //Telas
 
-const telas = {
-    
+let telaAtiva = {};
+
+function mudaTela(novaTela) {
+    telaAtiva = novaTela;
 }
 
+const telas = {
+    INICIO: {
+        desenha() {
+            planoDeFundo.desenha();
+            chao.desenha();
+            flappyBird.desenha();
+            mensagemGetReady.desenha();
+        },
+        click() {
+            mudaTela(telas.JOGO);
+        },
+        atualiza() {
+
+        }
+    },
+    JOGO: {
+        desenha() {
+            planoDeFundo.desenha();
+            chao.desenha();
+            flappyBird.desenha();
+        },
+        atualiza() {
+            flappyBird.atualiza();
+        }
+    }
+};
+
 function loop() {
-    flappyBird.atualiza();
-
-    planoDeFundo.desenha();
-    chao.desenha();
-    flappyBird.desenha();
-
-    mensagemGetReady.desenha();
+    telaAtiva.desenha();
+    telaAtiva.atualiza();
     
     requestAnimationFrame(loop);
 }
 
+window.addEventListener('click', function() {
+    if(telaAtiva.click) {
+        telaAtiva.click();
+    }
+});
+
+mudaTela(telas.INICIO);
 loop();
