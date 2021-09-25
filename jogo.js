@@ -129,10 +129,13 @@ function criaCanos() {
         },
         espaco: 80,
         desenha() {
-            const yRandom = -150;
-            const espacoCanos = 90;
+            
 
-            const canoCeuX = 220;
+            canos.pares.forEach(function(par){
+                const yRandom = par.y;
+                const espacoCanos = 90;
+                // Cano Ceu
+            const canoCeuX = par.x;
             const canoCeuY = yRandom;
 
             contexto.drawImage(
@@ -142,8 +145,8 @@ function criaCanos() {
                 canoCeuX, canoCeuY,
                 canos.largura, canos.altura,
             )
-
-            const canoChaoX = 220;
+            // Cano Chao
+            const canoChaoX = par.x;
             const canoChaoY = canos.altura + espacoCanos + yRandom;
 
             contexto.drawImage(
@@ -153,7 +156,56 @@ function criaCanos() {
                 canoChaoX, canoChaoY,
                 canos.largura, canos.altura,
             )
+
+            par.canoCeu = {
+                x: canoCeuX,
+                y: canos.altura + canoCeuY,
+            }
+            par.canoChao = {
+                x: canoChaoX,
+                y: canoChaoY,
+            }
+            })
+            
         },
+        colisaoComFlappy(par) {
+            const cabecaFlappy = globais.flappyBird.y;
+            const peFlappy = globais.flappyBird.y + globais.flappyBird.altura;
+
+            if(globais.flappyBird.x >= par.x) {
+                if(cabecaFlappy <= par.canoCeu.y) {
+                    return true;
+                }
+                if(peFlappy >= par.canoChao.y) {
+                    return true;
+                }
+            }
+            return false;
+        },
+
+        pares: [],
+        atualiza() {
+            const passou100frames = frames % 100 === 0;
+            if(passou100frames) {
+                canos.pares.push(
+                    {
+                        x: canvas.width,
+                        y: -150 * (Math.random() + 1),
+                    }, 
+                )
+            }
+            canos.pares.forEach(function(par){
+                par.x = par.x -2;
+
+                if(canos.colisaoComFlappy(par)) {
+                    mudaTela(telas.INICIO);
+                }
+
+                if(par.x + canos.largura <= 0) {
+                    canos.pares.shift();
+                }
+            });
+        }
     }
     return canos;
 }
@@ -227,8 +279,7 @@ const telas = {
             planoDeFundo.desenha();
             globais.chao.desenha();
             globais.flappyBird.desenha();
-            globais.canos.desenha();
-            // mensagemGetReady.desenha();
+            mensagemGetReady.desenha();
             
         },
         click() {
@@ -236,11 +287,13 @@ const telas = {
         },
         atualiza() {
             globais.chao.atualiza();
+            
         }
     },
     JOGO: {
         desenha() {
             planoDeFundo.desenha();
+            globais.canos.desenha();
             globais.chao.desenha();
             globais.flappyBird.desenha();
         },
@@ -249,6 +302,8 @@ const telas = {
         },
         atualiza() {
             globais.flappyBird.atualiza();
+            globais.canos.atualiza();
+            globais.chao.atualiza();
         }
     }
 };
