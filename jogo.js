@@ -268,6 +268,28 @@ function mudaTela(novaTela) {
     }
 }
 
+function criaPlacar() {
+    const placar = {
+        pontuacao: 0,
+        desenha() {
+            contexto.font = '35px "VT323"';
+            contexto.textAlign = 'right';
+            contexto.fillStyle = 'white';
+            contexto.fillText(`${placar.pontuacao}`, canvas.width - 10, 35);
+            placar.pontuacao;
+        },
+        atualiza() {
+            const intervaloFrame = 20;
+            const passouIntervalo = frames % intervaloFrame === 0;
+            if(passouIntervalo) {
+                placar.pontuacao = placar.pontuacao + 1;
+            }
+            
+        },
+    };
+    return placar;
+}
+
 const telas = {
     INICIO: {
         inicializa() {
@@ -291,11 +313,15 @@ const telas = {
         }
     },
     JOGO: {
+        inicializa() {
+            globais.placar = criaPlacar();
+        },
         desenha() {
             planoDeFundo.desenha();
             globais.canos.desenha();
             globais.chao.desenha();
             globais.flappyBird.desenha();
+            globais.placar.desenha();
         },
         click() {
             globais.flappyBird.pula();
@@ -304,6 +330,28 @@ const telas = {
             globais.flappyBird.atualiza();
             globais.canos.atualiza();
             globais.chao.atualiza();
+            globais.placar.atualiza();
+        }
+    },
+    GAME_OVER: {
+        inicializa() {
+            globais.placar = criaPlacar();
+        },
+        desenha() {
+            planoDeFundo.desenha();
+            globais.canos.desenha();
+            globais.chao.desenha();
+            globais.flappyBird.desenha();
+            globais.placar.desenha();
+        },
+        click() {
+            mudaTela(telas.INICIO);
+        },
+        atualiza() {
+            globais.flappyBird.atualiza();
+            globais.canos.atualiza();
+            globais.chao.atualiza();
+            globais.placar.atualiza();
         }
     }
 };
