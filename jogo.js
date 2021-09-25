@@ -115,6 +115,49 @@ function criaChao() {
     return chao;
 };
 
+function criaCanos() {
+    const canos = {
+        largura: 52,
+        altura: 400,
+        chao: {
+            spriteX: 0,
+            spriteY: 169,
+        },
+        ceu: {
+            spriteX: 52,
+            spriteY: 169,
+        },
+        espaco: 80,
+        desenha() {
+            const yRandom = -150;
+            const espacoCanos = 90;
+
+            const canoCeuX = 220;
+            const canoCeuY = yRandom;
+
+            contexto.drawImage(
+                sprites,
+                canos.ceu.spriteX, canos.ceu.spriteY,
+                canos.largura, canos.altura,
+                canoCeuX, canoCeuY,
+                canos.largura, canos.altura,
+            )
+
+            const canoChaoX = 220;
+            const canoChaoY = canos.altura + espacoCanos + yRandom;
+
+            contexto.drawImage(
+                sprites,
+                canos.chao.spriteX, canos.chao.spriteY,
+                canos.largura, canos.altura,
+                canoChaoX, canoChaoY,
+                canos.largura, canos.altura,
+            )
+        },
+    }
+    return canos;
+}
+
 
 const planoDeFundo = {
     spriteX: 390,
@@ -178,12 +221,15 @@ const telas = {
         inicializa() {
             globais.flappyBird = criaFlappyBird();
             globais.chao = criaChao();
+            globais.canos = criaCanos();
         },
         desenha() {
             planoDeFundo.desenha();
             globais.chao.desenha();
             globais.flappyBird.desenha();
-            mensagemGetReady.desenha();
+            globais.canos.desenha();
+            // mensagemGetReady.desenha();
+            
         },
         click() {
             mudaTela(telas.JOGO);
