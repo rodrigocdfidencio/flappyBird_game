@@ -36,10 +36,7 @@ function criaFlappyBird() {
             if(fazColisao(flappyBird, globais.chao)) {
                 som_HIT.play();
 
-                setTimeout(() => {
-                mudaTela(telas.INICIO);
-                }, 500);
-                
+                mudaTela(telas.GAME_OVER);
                 return;
             }
             flappyBird.velocidade = flappyBird.velocidade + flappyBird.gravidade;
@@ -172,7 +169,7 @@ function criaCanos() {
             const cabecaFlappy = globais.flappyBird.y;
             const peFlappy = globais.flappyBird.y + globais.flappyBird.altura;
 
-            if(globais.flappyBird.x >= par.x) {
+            if((globais.flappyBird.x + globais.flappyBird.largura) >= par.x) {
                 if(cabecaFlappy <= par.canoCeu.y) {
                     return true;
                 }
@@ -198,7 +195,8 @@ function criaCanos() {
                 par.x = par.x -2;
 
                 if(canos.colisaoComFlappy(par)) {
-                    mudaTela(telas.INICIO);
+                    som_HIT.play();
+                    mudaTela(telas.GAME_OVER);
                 }
 
                 if(par.x + canos.largura <= 0) {
@@ -252,6 +250,24 @@ const mensagemGetReady = {
             mensagemGetReady.largura, mensagemGetReady.altura,
             mensagemGetReady.x, mensagemGetReady.y,
             mensagemGetReady.largura, mensagemGetReady.altura,
+        );
+    }
+}
+
+const mensagemGameOver = {
+    spriteX: 134,
+    spriteY: 153,
+    largura:226,
+    altura: 200,
+    x: (canvas.width / 2) - 226 / 2,
+    y: 50,
+    desenha() {
+        contexto.drawImage(
+            sprites,
+            mensagemGameOver.spriteX, mensagemGameOver.spriteY,
+            mensagemGameOver.largura, mensagemGameOver.altura,
+            mensagemGameOver.x, mensagemGameOver.y,
+            mensagemGameOver.largura, mensagemGameOver.altura,
         );
     }
 }
@@ -338,11 +354,7 @@ const telas = {
             globais.placar = criaPlacar();
         },
         desenha() {
-            planoDeFundo.desenha();
-            globais.canos.desenha();
-            globais.chao.desenha();
-            globais.flappyBird.desenha();
-            globais.placar.desenha();
+            mensagemGameOver.desenha()
         },
         click() {
             mudaTela(telas.INICIO);
